@@ -2,9 +2,9 @@
 /**
  * Plugin Name: Hybrid Byline
  * Plugin URI: http://developdaly.com
- * Description: http://developdaly.com
+ * Description: Customize the byline of Hybrid themes
  * Version: 0.2
- * Author: Develop Daly
+ * Author: Patrick Daly
  * Author URI: http://developdaly.com 
  * 
  * Copyright 2009  Develop Daly  (http://developdaly.com)
