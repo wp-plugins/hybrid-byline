@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: hybrid, byline, meta
 Requires at least: 2.8
 Tested up to: 2.9.1
-Stable tag: 0.1
+Stable tag: 0.2
 
 Adds an interface to the Hybrid Settings page to change the byline settings.
 
