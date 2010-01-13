@@ -3,8 +3,8 @@ Contributors: developdaly
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=10208662
 Tags: hybrid, byline, meta
 Requires at least: 2.8
-Tested up to: 2.8.6
-Stable tag: 0.1
+Tested up to: 2.9.1
+Stable tag: 0.2
 
 Adds an interface to the Hybrid Settings page to change the byline settings.
 
@@ -31,3 +31,7 @@ Hybrid is an amazingly flexible theme, but it needed an easier way to customize 
 = 0.1 =
 
 * Just released
+
+= 0.2 =
+
+* Out of beta
