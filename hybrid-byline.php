@@ -4,8 +4,8 @@
  * Plugin URI: http://developdaly.com
  * Description: Customize the byline of Hybrid themes
  * Version: 0.2
- * Author: Develop Daly
- * Author URI: http://developdaly.com
+ * Author: Patrick Daly
+ * Author URI: http://developdaly.com 
  * 
  * Copyright 2009  Develop Daly  (http://developdaly.com)
  * 
@@ -24,16 +24,33 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+/* Set constant path to the my_snippets plugin directory. */
+define( HYBRID_BYLINE_DIR, plugin_dir_path( __FILE__ ) );
+
 /* Plugin settings. */
 $hbp_settings = get_option( 'hbp_settings_option' );
 
-/* Add actions. */
-add_action( 'hybrid_child_settings', 'hbp_settings' );
-add_action( 'admin_menu', 'create_hbp_meta_box' );
-add_action( 'hybrid_update_settings_page', 'save_hbp_meta_box' );
+/* Launch the plugin. */
+add_action( 'plugins_loaded', 'hbp_plugin_init' );
 
-/* Add filter. */
-add_filter('hybrid_byline', 'hbp', 11);
+/**
+ * Initialize the plugin. This function adds needed functions to the required hooks.
+ *
+ * @since 0.2
+ */
+function hbp_plugin_init() {
+
+	/* Load global functions for the byline output options. */
+	require_once( HYBRID_BYLINE_DIR . '/options.php' );
+
+	/* Meta box on Hybrid Settings page. */
+	add_action( 'admin_menu', 'create_hbp_meta_box' );
+	add_action( 'hybrid_child_settings', 'hbp_settings' );
+	add_action( 'hybrid_update_settings_page', 'save_hbp_meta_box' );
+	
+	/* Add filter. */
+	add_filter('hybrid_byline', 'hbp', 11);
+}
 
 /**
 * Creates the meta box on the Hybrid Settings page
@@ -41,85 +58,7 @@ add_filter('hybrid_byline', 'hbp', 11);
 * @since 0.2
 */
 function create_hbp_meta_box() {
-	add_meta_box( "hbp-meta-box", __('Hybrid Byline', 'hybrid-byline'), 'hbp_callback', 'appearance_page_theme-settings', 'normal', 'high' );
-}
-
-/**
-* Handles the author output
-*
-* @since 0.1
-*/
-function hbp_author(){
-	global $hbp_settings;
-	
-	if ( $hbp_settings['byline_post_show_authorlink'] == 1 ) {			
-		$author = sprintf(
-			'<span class="byline-prep byline-prep-author text">By</span> <span class="author vcard"><a href="%1$s" title="%2$s" class="url fn n">%3$s</a></span></span>',
-			get_author_posts_url( $authordata->ID, $authordata->user_nicename ),
-			esc_attr( sprintf( __( 'Posts by %s' ), get_the_author() ) ),
-			get_the_author()
-		);
-	} else {
-		$author = '<span class="fn n">';
-		$author .= get_the_author();
-		$author .= '</span>';
-	}
-	
-	return $author;
-}
-
-/**
-* Handles the date output
-*
-* @since 0.1
-*/
-function hbp_date() {
-	global $hbp_settings;
-	
-	$date .= ' <span class="byline-prep byline-prep-published text">on</span> ';
-	$date .= '<abbr class="published" title="' . sprintf( get_the_time( __('l, F jS, Y, g:i a', 'hybrid') ) ) . '">' . sprintf( get_the_time( get_option( 'date_format' ) ) ) . '</abbr>';	
-
-	return $date;
-}
-
-/**
-* Handles the nofollow 
-*
-* @since 0.1
-*/
-function hbp_nofollow() {
-	global $hbp_settings;
-	
-	if ( $hbp_settings['byline_post_authorlink_nofollow'] == 0 ) {
-		$nofollow = 'rel="nofollow"';
-	}
-
-	return $nofollow;
-}
-
-/**
-* Handles the comment output
-*
-* @since 0.1
-*/
-function hbp_comments(){
-	$num_comments = get_comments_number();
-	$text = '  -  ';
-	$text .= (comments_open()) ? '<a href="' . get_permalink() . '#comments" rel="nofollow">' . $num_comments . ' Comments</a>' : __('Comments on this entry are closed', 'thesis');
-	return apply_filters('thesis_comments_link', $text);
-}
-
-/**
-* Handles the categories output
-*
-* @since 0.1
-*/
-function hbp_categories(){
-	$categories = ' <span class="categories">in ';
-	$categories .= get_the_category_list(',');
-	$categories .= '</span>';
-	
-	return $categories;
+	add_meta_box( "hbp-meta-box", __('Hybrid Byline', 'hybrid-byline'), 'hbp_callback', 'appearance_page_theme-settings', 'normal', 'low' );
 }
 
 /**
@@ -164,33 +103,9 @@ function hbp( $out ) {
 			$byline .= ' <span class="byline-sep byline-sep-edit separator">|</span> <span class="edit"><a class="post-edit-link" href="' . get_edit_post_link( $post->ID ) . '" title="' . __('Edit post', 'hybrid') . '">' . __('Edit', 'hybrid') . '</a></span>';
 	} 
 	
-
 	$byline .= '</p>';
 
 	echo apply_filters( 'hbp', $byline );
-}
-
-/**
-* Saves the settings
-*
-* @since 0.2
-*/
-function save_hbp_meta_box() {
-	
-	/* Verify the nonce, so we know this is secure. */
-	if ( !wp_verify_nonce( $_POST['hbp_meta_box_nonce'], basename( __FILE__ ) ) )
-		return false;
-	
-	/* Get the current plugin settings. */
-	$options = get_option( 'hbp_meta_box' );
-	
-	/* Loop through each of the default settings and match them with the posted settings. */
-	foreach ( hbp_settings() as $key => $value )
-		$settings[$key] = $_POST[$key];	
-	
-	/* Update the plugin settings. */
-	$updated = update_option( 'hbp_meta_box', $options );
-	
 }
 
 function hbp_settings() {
@@ -247,5 +162,28 @@ function hbp_callback() {
 		</tr>
 		
 	</table><?php
+}
+
+/**
+* Saves the settings
+*
+* @since 0.1
+*/
+function save_hbp_meta_box() {
+	
+	/* Verify the nonce, so we know this is secure. */
+	if ( !wp_verify_nonce( $_POST['hbp_meta_box_nonce'], basename( __FILE__ ) ) )
+		return false;
+	
+	/* Get the current plugin settings. */
+	$options = get_option( 'hbp_meta_box' );
+	
+	/* Loop through each of the default settings and match them with the posted settings. */
+	foreach ( hbp_settings() as $key => $value )
+		$settings[$key] = $_POST[$key];	
+	
+	/* Update the plugin settings. */
+	$updated = update_option( 'hbp_meta_box', $options );
+		
 }
 ?>
