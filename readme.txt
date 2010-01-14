@@ -35,3 +35,7 @@ Hybrid is an amazingly flexible theme, but it needed an easier way to customize 
 = 0.2 =
 
 * Out of beta
+
+= 0.2.1 =
+
+* Saves settings properly
